@@ -1,0 +1,202 @@
+{
+  "kind": "build_request",
+  "title": "Build Criminal Defence 305 intake + payments website (cards, PayPal/Cash App instructions, cash-at-store code)",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create the base app/website branded as “Criminal Defence 305” with core informational pages that explain the low-cost criminal defense help services and how the process works.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2",
+          "msg-12"
+        ],
+        "quotes": [
+          "AI. Criminal defence 305 is the apps name",
+          "You asked for a criminal defense help website that offers low‑cost assistance for people who feel they were unlawfully imprisoned",
+          "Summary: Build “Criminal Defence 305”, a criminal defense help platform offering low-cost assistance where users can learn about services"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Site header/footer show the app name “Criminal Defence 305”.",
+        "At least these pages exist and are navigable: Home, Services, How It Works, Case Submission, Payments, Contact/Disclaimer.",
+        "All user-facing text is in English."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement a case intake/submission flow where users can enter case details and submit them through the platform, then receive an on-screen confirmation with a unique submission ID.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-12"
+        ],
+        "quotes": [
+          "I’ll build a site where users can learn about services, submit their cases",
+          "Allow users to submit their case details through the platform (case intake/submission)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Frontend provides a case submission form with basic validation and a submit button.",
+        "Backend stores each case submission and returns a unique submission ID.",
+        "After submission, the UI shows a confirmation view including the submission ID and a clear next-step message (English)."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add a checkout/payment step tied to a case submission that lets users choose a payment method: credit/debit card, PayPal, Cash App, or cash at approved stores.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-3",
+          "msg-4",
+          "msg-12"
+        ],
+        "quotes": [
+          "Credit card friendly and cash up front payments are also taken",
+          "Support online payments via credit/debit card, PayPal, and Cash App during checkout for services/case submission"
+        ]
+      },
+      "acceptanceCriteria": [
+        "UI presents payment method choices for: Card (credit/debit), PayPal, Cash App, Cash at Store.",
+        "A payment record is created on the backend and linked to the case submission ID.",
+        "User can return to a payment status page using the case submission ID (or payment ID) to see current status (e.g., Pending, Instructions Provided, Paid, Cancelled)."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Support card payments via Stripe checkout (or Stripe payment link flow) as the card-processing method for the app.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-3",
+          "msg-6",
+          "msg-12"
+        ],
+        "quotes": [
+          "Credit card friendly",
+          "For credit card payments, should these be processed through an online payment provider (like Stripe)?",
+          "Support online payments via credit/debit card"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Selecting Card leads the user into a Stripe-based payment flow.",
+        "On successful payment completion, the app records the payment as Paid and displays a success confirmation to the user.",
+        "If the user cancels/fails, the app shows a clear failure/cancel state and keeps the payment record as not-paid."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "For PayPal and Cash App payment methods, provide in-app payment instructions and collect a user-entered payment reference (e.g., transaction ID or username) to associate with the case submission.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-12"
+        ],
+        "quotes": [
+          "support for payment options like PayPal, Cash App",
+          "Support online payments via ... PayPal, and Cash App during checkout"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Selecting PayPal shows a dedicated instructions screen (English) and a field to enter a payment reference.",
+        "Selecting Cash App shows a dedicated instructions screen (English) and a field to enter a payment reference.",
+        "Submitting a reference stores it in the backend payment record and marks the payment status as “Reference Submitted” (or equivalent)."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement cash payments at approved third-party stores by generating a payment code/receipt in the app that the user can present at the store; no in-person payments scheduling.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-5",
+          "msg-7",
+          "msg-8",
+          "msg-9",
+          "msg-12"
+        ],
+        "quotes": [
+          "No in person payments just at certain stores that accept dealing with me",
+          "2",
+          "you want the app to generate a payment code or receipt that users can take to the approved stores to pay",
+          "Enable cash payments at approved third-party stores by generating a payment code/receipt users can present to pay (no in-person payments)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Selecting Cash at Store generates a unique payment code and a printable receipt view (English) containing: app name, payment ID, amount (if applicable), code, creation date/time, and basic instructions.",
+        "The generated cash payment code is stored on the backend and linked to the case submission/payment record.",
+        "The UI provides a “Mark as paid / I have paid” acknowledgement option that updates status to “User Reported Paid” (without requiring external integrations)."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add a consistent, coherent visual theme for Criminal Defence 305 (colors, typography, layout) suitable for a serious legal-aid service, and apply it across all pages without using a blue/purple-dominant palette.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "AI. Criminal defence 305 is the apps name",
+          "You asked for a criminal defense help website..."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Theme is applied consistently to navigation, headings, buttons, and forms.",
+        "Design reads as professional/legal-aid oriented (clean, high-contrast, accessible).",
+        "Primary/brand palette is not blue/purple-dominant."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Add generated static brand images (logo and simple hero/banner) and render them in the UI from frontend/public/assets/generated (do not serve via backend).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "AI. Criminal defence 305 is the apps name"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Generated images exist in frontend/public/assets/generated and are referenced by the React app.",
+        "Home page includes the hero/banner image and the app logo in the header (or equivalent)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Use English for all user-facing text.",
+    "Backend must remain a single Motoko actor in backend/main.mo; only add backend/migration.mo if an upgrade/state migration becomes necessary.",
+    "Do not edit files in frontend immutablePaths (compose existing UI components instead).",
+    "Do not implement in-person payment scheduling; cash payment must be handled via a generated code/receipt for approved stores."
+  ],
+  "nonGoals": [
+    "Do not build third-party PayPal or Cash App API integrations (provide instructions + reference capture instead).",
+    "Do not implement real-time chat, SMS, push notifications, or email delivery integrations.",
+    "Do not build a multi-backend/microservices architecture or use external databases."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Wordmark logo reading “Criminal Defence 305”, bold legal-inspired typography, monochrome or dark neutral palette (cd305-logo.dim_512x512.png)",
+      "Wide hero/banner illustration with abstract courthouse/justice motifs, minimal flat style, dark neutral palette (cd305-hero.dim_1600x600.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

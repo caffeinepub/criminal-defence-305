@@ -1,0 +1,309 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Criminal Defence 305 intake + payments (frontend)",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Build the branded “Criminal Defence 305” frontend with navigable informational pages and consistent header/footer.",
+      "acceptanceCriteria": [
+        "Site header/footer show the app name “Criminal Defence 305”.",
+        "At least these pages exist and are navigable: Home, Services, How It Works, Case Submission, Payments, Contact/Disclaimer.",
+        "All user-facing text is in English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create the app shell and route layout (header/footer + main content) and wire navigation to the required pages (Home, Services, How It Works, Case Submission, Payments, Contact/Disclaimer)."
+        },
+        {
+          "path": "frontend/src/components/layout/SiteHeader.tsx",
+          "operation": "create",
+          "description": "Implement a consistent header that displays “Criminal Defence 305” and provides navigation links to all required pages."
+        },
+        {
+          "path": "frontend/src/components/layout/SiteFooter.tsx",
+          "operation": "create",
+          "description": "Implement a consistent footer showing “Criminal Defence 305” plus Contact/Disclaimer access and basic legal-aid disclaimers (English)."
+        },
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "create",
+          "description": "Create the Home page content describing the service and how the process works at a high level (English)."
+        },
+        {
+          "path": "frontend/src/pages/ServicesPage.tsx",
+          "operation": "create",
+          "description": "Create the Services page describing low-cost criminal defense help offerings (English)."
+        },
+        {
+          "path": "frontend/src/pages/HowItWorksPage.tsx",
+          "operation": "create",
+          "description": "Create the How It Works page explaining the steps (intake → payment → review) (English)."
+        },
+        {
+          "path": "frontend/src/pages/CaseSubmissionPage.tsx",
+          "operation": "create",
+          "description": "Create a placeholder page that links into the actual intake flow (wired in REQ-2) and explains what information users should prepare (English)."
+        },
+        {
+          "path": "frontend/src/pages/PaymentsPage.tsx",
+          "operation": "create",
+          "description": "Create a Payments page that explains available payment methods and links into the payment flow (wired in REQ-3+)."
+        },
+        {
+          "path": "frontend/src/pages/ContactDisclaimerPage.tsx",
+          "operation": "create",
+          "description": "Create the Contact/Disclaimer page with contact info placeholders and clear disclaimers (not legal advice, etc.) (English)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Implement a case intake/submission UI with validation, submission to the backend actor, and confirmation with a unique submission ID.",
+      "acceptanceCriteria": [
+        "Frontend provides a case submission form with basic validation and a submit button.",
+        "Backend stores each case submission and returns a unique submission ID.",
+        "After submission, the UI shows a confirmation view including the submission ID and a clear next-step message (English)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CaseSubmissionPage.tsx",
+          "operation": "modify",
+          "description": "Implement the case submission form UI (details textarea + payment method selection) with basic validation, calling the backend actor createCase(...) and handling loading/error states."
+        },
+        {
+          "path": "frontend/src/pages/CaseSubmissionConfirmationPage.tsx",
+          "operation": "create",
+          "description": "Create the on-screen confirmation view that displays the returned submission ID and clear next-step guidance (e.g., proceed to payment) (English)."
+        },
+        {
+          "path": "frontend/src/components/case/CaseSubmissionForm.tsx",
+          "operation": "create",
+          "description": "Extract the intake form into a reusable component (fields, validation messages, submit button) used by CaseSubmissionPage."
+        },
+        {
+          "path": "frontend/src/hooks/useCreateCase.ts",
+          "operation": "create",
+          "description": "Create a React Query mutation hook that calls actor.createCase(...) and returns the submission ID; centralize client-side validation + error handling."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the confirmation view into routing and ensure the submission flow navigates from Case Submission to the confirmation view after successful createCase(...)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add a payment step linked to a case submission with method selection and a payment status lookup page.",
+      "acceptanceCriteria": [
+        "UI presents payment method choices for: Card (credit/debit), PayPal, Cash App, Cash at Store.",
+        "A payment record is created on the backend and linked to the case submission ID.",
+        "User can return to a payment status page using the case submission ID (or payment ID) to see current status (e.g., Pending, Instructions Provided, Paid, Cancelled)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PaymentsPage.tsx",
+          "operation": "modify",
+          "description": "Implement a payment start flow that accepts a submission ID (from confirmation or manual entry) and presents method choices: Card, PayPal, Cash App, Cash at Store."
+        },
+        {
+          "path": "frontend/src/pages/PaymentStatusPage.tsx",
+          "operation": "create",
+          "description": "Create a payment/submission status page that lets users enter a submission ID and fetch status via actor.getSubmission(...) and actor.getPaymentReference(...), rendering clear status text (English)."
+        },
+        {
+          "path": "frontend/src/components/payment/PaymentMethodChooser.tsx",
+          "operation": "create",
+          "description": "Create the UI component that presents the four payment method choices and routes the user to the corresponding instructions/checkout view for the chosen method."
+        },
+        {
+          "path": "frontend/src/hooks/useSubmissionStatus.ts",
+          "operation": "create",
+          "description": "Create React Query hooks to fetch submission data (actor.getSubmission) and associated payment reference (actor.getPaymentReference) keyed by submission ID for the status page and payment flows."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add routes for the payment method pages and the Payment Status page; wire navigation from case confirmation to Payments with the submission ID carried through (e.g., via search params)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Enable card payments using a Stripe checkout redirect flow with success/failure handling in the UI.",
+      "acceptanceCriteria": [
+        "Selecting Card leads the user into a Stripe-based payment flow.",
+        "On successful payment completion, the app records the payment as Paid and displays a success confirmation to the user.",
+        "If the user cancels/fails, the app shows a clear failure/cancel state and keeps the payment record as not-paid."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/stripe/PaymentSetup.tsx",
+          "operation": "create",
+          "description": "Add a Stripe configuration/setup UI that uses isStripeConfigured() and setStripeConfiguration() for admin configuration. Use the selected stripe component capability for configuration flows. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useCreateCheckoutSession.ts",
+          "operation": "create",
+          "description": "Implement the Stripe checkout session creation hook that calls actor.createCheckoutSession(...), JSON-parses the response, validates a non-empty url, and returns the session. Use the selected stripe component capability for checkout session creation. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/CardCheckoutPage.tsx",
+          "operation": "create",
+          "description": "Create the Card payment page that builds ShoppingItem[] (service fee line item) and uses useCreateCheckoutSession() to redirect via window.location.href to Stripe checkout. Use the selected stripe component capability for redirect flow. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/PaymentSuccessPage.tsx",
+          "operation": "create",
+          "description": "Create the /payment-success page that shows a clear success message (English) and prompts the user to check status; optionally parse session info from URL if present and refetch status via actor.getStripeSessionStatus when applicable. Use the selected stripe component capability for success handling. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/PaymentFailurePage.tsx",
+          "operation": "create",
+          "description": "Create the /payment-failure page that shows a clear cancel/failure message (English) and provides a path back to payment method selection and status page. Use the selected stripe component capability for failure handling. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register routes for /payment-success and /payment-failure and ensure Card selection routes into CardCheckoutPage; include optional access to the Stripe PaymentSetup UI in a non-public admin-only area if the UI already supports it. Use the selected stripe component capability for required routes. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Provide PayPal and Cash App instruction screens and capture a user-entered payment reference linked to the submission.",
+      "acceptanceCriteria": [
+        "Selecting PayPal shows a dedicated instructions screen (English) and a field to enter a payment reference.",
+        "Selecting Cash App shows a dedicated instructions screen (English) and a field to enter a payment reference.",
+        "Submitting a reference stores it in the backend payment record and marks the payment status as “Reference Submitted” (or equivalent)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PayPalInstructionsPage.tsx",
+          "operation": "create",
+          "description": "Create a dedicated PayPal instructions screen (English) tied to a submission ID, with a payment reference input and submit button calling actor.submitPaymentReference(...)."
+        },
+        {
+          "path": "frontend/src/pages/CashAppInstructionsPage.tsx",
+          "operation": "create",
+          "description": "Create a dedicated Cash App instructions screen (English) tied to a submission ID, with a payment reference input and submit button calling actor.submitPaymentReference(...)."
+        },
+        {
+          "path": "frontend/src/components/payment/PaymentReferenceForm.tsx",
+          "operation": "create",
+          "description": "Implement a reusable component for capturing and submitting a reference value with validation and clear helper text (English)."
+        },
+        {
+          "path": "frontend/src/hooks/useSubmitPaymentReference.ts",
+          "operation": "create",
+          "description": "Create a React Query mutation hook that submits references via actor.submitPaymentReference(submissionId, referenceType, referenceValue) and refreshes cached status queries."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire routes/navigation from payment method selection to PayPalInstructionsPage and CashAppInstructionsPage, carrying the submission ID through."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Support “Cash at Store” by showing a generated payment code/receipt view and allowing a user acknowledgement after paying (no scheduling).",
+      "acceptanceCriteria": [
+        "Selecting Cash at Store generates a unique payment code and a printable receipt view (English) containing: app name, payment ID, amount (if applicable), code, creation date/time, and basic instructions.",
+        "The generated cash payment code is stored on the backend and linked to the case submission/payment record.",
+        "The UI provides a “Mark as paid / I have paid” acknowledgement option that updates status to “User Reported Paid” (without requiring external integrations)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CashAtStoreReceiptPage.tsx",
+          "operation": "create",
+          "description": "Create the Cash at Store receipt page that fetches the current payment reference via actor.getPaymentReference(submissionId) and renders a printable receipt view (English) including app name, submission/payment identifiers available in UI, code value, and creation date/time (from submission timestamp) plus instructions; include a print action using the browser print dialog."
+        },
+        {
+          "path": "frontend/src/components/payment/PrintableReceipt.tsx",
+          "operation": "create",
+          "description": "Implement a receipt component optimized for printing and on-screen viewing; ensure all required fields are present (English)."
+        },
+        {
+          "path": "frontend/src/components/payment/MarkAsPaidButton.tsx",
+          "operation": "create",
+          "description": "Add an acknowledgement control (“I have paid”) that triggers a backend update via the best-available backend capability (e.g., submitting a specific reference value or reference type) and then refreshes status; keep wording clear that it is user-reported (English)."
+        },
+        {
+          "path": "frontend/src/pages/PaymentsPage.tsx",
+          "operation": "modify",
+          "description": "When Cash at Store is selected, route to the CashAtStoreReceiptPage and show a clear note that there is no in-person scheduling—users pay at approved stores using the generated code/receipt (English)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route wiring for the CashAtStoreReceiptPage and ensure it is reachable from the payment method chooser with the submission ID carried through."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Apply a serious, professional legal-aid theme across the site with a non-blue/purple-dominant palette.",
+      "acceptanceCriteria": [
+        "Theme is applied consistently to navigation, headings, buttons, and forms.",
+        "Design reads as professional/legal-aid oriented (clean, high-contrast, accessible).",
+        "Primary/brand palette is not blue/purple-dominant."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Add global styles and Tailwind CSS variables for a neutral/dark professional palette (avoid blue/purple-dominant), typography defaults, and consistent form/button styling across pages."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust theme extensions (if needed) to support the chosen neutral brand palette, consistent radii/shadows, and accessible contrast while avoiding blue/purple-dominant primary colors."
+        },
+        {
+          "path": "frontend/src/components/layout/SiteHeader.tsx",
+          "operation": "modify",
+          "description": "Apply the theme to navigation, headings, and buttons/links in the header (consistent spacing/typography, high-contrast, accessible)."
+        },
+        {
+          "path": "frontend/src/components/layout/SiteFooter.tsx",
+          "operation": "modify",
+          "description": "Apply the theme to the footer for consistent typography and contrast (professional/legal-aid look)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Add and render generated static brand images (logo + hero/banner) from frontend/public/assets/generated.",
+      "acceptanceCriteria": [
+        "Generated images exist in frontend/public/assets/generated and are referenced by the React app.",
+        "Home page includes the hero/banner image and the app logo in the header (or equivalent)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/cd305-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated wordmark logo asset at the required path for static serving by the frontend."
+        },
+        {
+          "path": "frontend/public/assets/generated/cd305-hero.dim_1600x600.png",
+          "operation": "create",
+          "description": "Add the generated hero/banner image asset at the required path for static serving by the frontend."
+        },
+        {
+          "path": "frontend/src/components/layout/SiteHeader.tsx",
+          "operation": "modify",
+          "description": "Render the app logo image from frontend/public/assets/generated/cd305-logo.dim_512x512.png in the header alongside the “Criminal Defence 305” brand text."
+        },
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Render the hero/banner image from frontend/public/assets/generated/cd305-hero.dim_1600x600.png prominently on the Home page, consistent with the site theme."
+        }
+      ]
+    }
+  ]
+}

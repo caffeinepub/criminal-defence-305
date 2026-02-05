@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Build “Criminal Defence 305”, a criminal defense help platform offering low-cost assistance where users can learn about services, submit their cases, and pay using multiple methods including cards, PayPal, Cash App, and cash payments at approved stores via generated payment code/receipt.",
+  "architectural_notes": [
+    "Payment system must support both online card/wallet processing and offline cash-at-store payments via generated payment code/receipt."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Wordmark logo reading “Criminal Defence 305”, bold legal-inspired typography, monochrome or dark neutral palette (cd305-logo.dim_512x512.png)\n- Wide hero/banner illustration with abstract courthouse/justice motifs, minimal flat style, dark neutral palette (cd305-hero.dim_1600x600.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-the-base-app-website-branded-as-criminal-defence-305-with-core-informational-pages-that-explain-the-low-cost-criminal-defense-help-services-and-how-the-process-works",
+      "title": "Create the base app/website branded as “Criminal Defence 305” with core informational pages that explain the low-cost criminal defense help services and how the process works.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-case-intake-submission-flow-where-users-can-enter-case-details-and-submit-them-through-the-platform-then-receive-an-on-screen-confirmation-with-a-unique-submission-id",
+      "title": "Implement a case intake/submission flow where users can enter case details and submit them through the platform, then receive an on-screen confirmation with a unique submission ID.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-checkout-payment-step-tied-to-a-case-submission-that-lets-users-choose-a-payment-method-credit-debit-card-paypal-cash-app-or-cash-at-approved-stores",
+      "title": "Add a checkout/payment step tied to a case submission that lets users choose a payment method: credit/debit card, PayPal, Cash App, or cash at approved stores.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-support-card-payments-via-stripe-checkout-or-stripe-payment-link-flow-as-the-card-processing-method-for-the-app",
+      "title": "Support card payments via Stripe checkout (or Stripe payment link flow) as the card-processing method for the app.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-for-paypal-and-cash-app-payment-methods-provide-in-app-payment-instructions-and-collect-a-user-entered-payment-reference-e-g-transaction-id-or-username-to-associate-with-the-case-submission",
+      "title": "For PayPal and Cash App payment methods, provide in-app payment instructions and collect a user-entered payment reference (e.g., transaction ID or username) to associate with the case submission.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-cash-payments-at-approved-third-party-stores-by-generating-a-payment-code-receipt-in-the-app-that-the-user-can-present-at-the-store-no-in-person-payments-scheduling",
+      "title": "Implement cash payments at approved third-party stores by generating a payment code/receipt in the app that the user can present at the store; no in-person payments scheduling.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-consistent-coherent-visual-theme-for-criminal-defence-305-colors-typography-layout-suitable-for-a-serious-legal-aid-service-and-apply-it-across-all-pages-without-using-a-blue-purple-dominant-palette",
+      "title": "Add a consistent, coherent visual theme for Criminal Defence 305 (colors, typography, layout) suitable for a serious legal-aid service, and apply it across all pages without using a blue/purple-dominant palette.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-generated-static-brand-images-logo-and-simple-hero-banner-and-render-them-in-the-ui-from-frontend-public-assets-generated-do-not-serve-via-backend",
+      "title": "Add generated static brand images (logo and simple hero/banner) and render them in the UI from frontend/public/assets/generated (do not serve via backend).",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Create Criminal Defence 305 app/website with informational pages about low-cost criminal defense help services",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Allow users to submit their case details through the platform (case intake/submission)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Support online payments via credit/debit card, PayPal, and Cash App during checkout for services/case submission",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Enable cash payments at approved third-party stores by generating a payment code/receipt users can present to pay (no in-person payments)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Criminal Defence 305",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
