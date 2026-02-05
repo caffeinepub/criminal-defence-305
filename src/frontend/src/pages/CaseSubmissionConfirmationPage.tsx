@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Copy } from 'lucide-react';
+import { CheckCircle2, Copy, FileText, Scale } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function CaseSubmissionConfirmationPage() {
@@ -67,10 +67,27 @@ export default function CaseSubmissionConfirmationPage() {
               <h3 className="font-semibold">Next Steps:</h3>
               <ol className="list-decimal space-y-2 pl-5 text-sm text-muted-foreground">
                 <li>Complete payment using your selected payment method</li>
+                <li>Upload any supporting documents for your case</li>
                 <li>Our team will review your case within 3-5 business days</li>
-                <li>Check your case status anytime using your submission ID</li>
-                <li>You'll receive guidance and recommendations based on your case</li>
+                <li>Access draft motions and legal references to support your case</li>
               </ol>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate({ to: `/submissions/${submissionId}/documents` })}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Upload Documents
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate({ to: `/submissions/${submissionId}/draft-motions` })}
+              >
+                <Scale className="mr-2 h-4 w-4" />
+                Draft Motions
+              </Button>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">

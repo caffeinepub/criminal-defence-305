@@ -37,6 +37,7 @@ export default function SiteHeader() {
     { to: '/', label: 'Home' },
     { to: '/services', label: 'Services' },
     { to: '/how-it-works', label: 'How It Works' },
+    { to: '/reference-library', label: 'Legal Library' },
     { to: '/case-submission', label: 'Submit Case' },
     { to: '/payment-status', label: 'Check Status' },
     { to: '/contact', label: 'Contact' },

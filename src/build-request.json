@@ -1,192 +1,120 @@
 {
   "kind": "build_request",
-  "title": "Build Criminal Defence 305 intake + payments website (cards, PayPal/Cash App instructions, cash-at-store code)",
-  "priority": "normal",
+  "title": "Add legal document support, reference library, and motion drafting assistance tied to case submissions",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Create the base app/website branded as “Criminal Defence 305” with core informational pages that explain the low-cost criminal defense help services and how the process works.",
-      "target": "frontend",
+      "id": "REQ-9",
+      "text": "Add backend data models and actor methods to store and retrieve (a) user-uploaded legal documents tied to a case submission and (b) generated draft motion documents tied to a case submission, with ownership checks (user can only access their own items; admin can access all).",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-2",
-          "msg-12"
+          "msg-6",
+          "msg-10"
         ],
         "quotes": [
-          "AI. Criminal defence 305 is the apps name",
-          "You asked for a criminal defense help website that offers low‑cost assistance for people who feel they were unlawfully imprisoned",
-          "Summary: Build “Criminal Defence 305”, a criminal defense help platform offering low-cost assistance where users can learn about services"
+          "I want this app to support legal documents and ensure the rules are being followed if not it creates the motions for the client",
+          "...find out what it is that the courts did wrong to free my defendants."
         ]
       },
       "acceptanceCriteria": [
-        "Site header/footer show the app name “Criminal Defence 305”.",
-        "At least these pages exist and are navigable: Home, Services, How It Works, Case Submission, Payments, Contact/Disclaimer.",
-        "All user-facing text is in English."
+        "Backend exposes methods to create/list/get/delete legal documents for a given submission ID with authorization enforcement consistent with existing submission ownership rules.",
+        "Backend exposes methods to create/list/get draft motions for a given submission ID with the same authorization rules.",
+        "Attempting to access another user’s documents/motions as a non-admin traps/returns an authorization error consistent with existing patterns."
       ]
     },
     {
-      "id": "REQ-2",
-      "text": "Implement a case intake/submission flow where users can enter case details and submit them through the platform, then receive an on-screen confirmation with a unique submission ID.",
+      "id": "REQ-10",
+      "text": "Implement a backend-managed reference library feature that allows admins to add, update, list, and delete reference entries (text and metadata), and allows authenticated users to search/browse and view reference entries in-app.",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-12"
+          "msg-8"
         ],
         "quotes": [
-          "I’ll build a site where users can learn about services, submit their cases",
-          "Allow users to submit their case details through the platform (case intake/submission)"
+          "All of them, all criminal law, it has to be backed by the constitution, due process, and all criminal law books need to be there for the app to look through it"
         ]
       },
       "acceptanceCriteria": [
-        "Frontend provides a case submission form with basic validation and a submit button.",
-        "Backend stores each case submission and returns a unique submission ID.",
-        "After submission, the UI shows a confirmation view including the submission ID and a clear next-step message (English)."
+        "Admin-only backend methods exist to CRUD reference entries (title + body text + optional tags/source fields).",
+        "User-accessible backend methods exist to list/search reference entries without exposing admin-only operations.",
+        "Frontend includes a Reference Library page where users can search and read entries; content is loaded via React Query hooks.",
+        "Frontend includes an Admin UI section/page to manage reference entries (create/edit/delete) gated behind existing admin checks."
       ]
     },
     {
-      "id": "REQ-3",
-      "text": "Add a checkout/payment step tied to a case submission that lets users choose a payment method: credit/debit card, PayPal, Cash App, or cash at approved stores.",
+      "id": "REQ-11",
+      "text": "Add a guided “Draft Motion” flow that lets a user select a case submission, pick a motion template, fill in required fields, optionally select relevant reference-library entries, and then generates a draft motion document (text output) saved to the backend under that submission.",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-3",
-          "msg-4",
-          "msg-12"
-        ],
-        "quotes": [
-          "Credit card friendly and cash up front payments are also taken",
-          "Support online payments via credit/debit card, PayPal, and Cash App during checkout for services/case submission"
-        ]
-      },
-      "acceptanceCriteria": [
-        "UI presents payment method choices for: Card (credit/debit), PayPal, Cash App, Cash at Store.",
-        "A payment record is created on the backend and linked to the case submission ID.",
-        "User can return to a payment status page using the case submission ID (or payment ID) to see current status (e.g., Pending, Instructions Provided, Paid, Cancelled)."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Support card payments via Stripe checkout (or Stripe payment link flow) as the card-processing method for the app.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-3",
           "msg-6",
           "msg-12"
         ],
         "quotes": [
-          "Credit card friendly",
-          "For credit card payments, should these be processed through an online payment provider (like Stripe)?",
-          "Support online payments via credit/debit card"
+          "...it creates the motions for the client",
+          "3"
         ]
       },
       "acceptanceCriteria": [
-        "Selecting Card leads the user into a Stripe-based payment flow.",
-        "On successful payment completion, the app records the payment as Paid and displays a success confirmation to the user.",
-        "If the user cancels/fails, the app shows a clear failure/cancel state and keeps the payment record as not-paid."
+        "Backend supports admin-managed motion templates (template name + template body with placeholders + required field definitions).",
+        "Frontend provides a Draft Motion wizard that: selects submission ID, selects a template, collects field inputs, previews generated text, and saves the final draft motion to the backend.",
+        "Generated drafts are persisted and can be re-opened from a per-submission list view for the authenticated user.",
+        "All user-facing screens include clear English-language disclaimer text stating drafts are informational and must be reviewed by a qualified attorney before filing."
       ]
     },
     {
-      "id": "REQ-5",
-      "text": "For PayPal and Cash App payment methods, provide in-app payment instructions and collect a user-entered payment reference (e.g., transaction ID or username) to associate with the case submission.",
+      "id": "REQ-12",
+      "text": "Add frontend UI to upload and manage legal documents for a submission (metadata + file content stored as text or base64 where feasible), including listing documents, viewing a document, and deleting a document, with clear size/type limits communicated to the user.",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-12"
+          "msg-6"
         ],
         "quotes": [
-          "support for payment options like PayPal, Cash App",
-          "Support online payments via ... PayPal, and Cash App during checkout"
+          "I want this app to support legal documents"
         ]
       },
       "acceptanceCriteria": [
-        "Selecting PayPal shows a dedicated instructions screen (English) and a field to enter a payment reference.",
-        "Selecting Cash App shows a dedicated instructions screen (English) and a field to enter a payment reference.",
-        "Submitting a reference stores it in the backend payment record and marks the payment status as “Reference Submitted” (or equivalent)."
+        "A user can attach at least one document to a submission, see it listed under that submission, open/view it, and delete it.",
+        "UI communicates allowed file types and a maximum file size limit before upload/submit.",
+        "Uploads and downloads are gated by authentication and submission ownership checks."
       ]
     },
     {
-      "id": "REQ-6",
-      "text": "Implement cash payments at approved third-party stores by generating a payment code/receipt in the app that the user can present at the store; no in-person payments scheduling.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-5",
-          "msg-7",
-          "msg-8",
-          "msg-9",
-          "msg-12"
-        ],
-        "quotes": [
-          "No in person payments just at certain stores that accept dealing with me",
-          "2",
-          "you want the app to generate a payment code or receipt that users can take to the approved stores to pay",
-          "Enable cash payments at approved third-party stores by generating a payment code/receipt users can present to pay (no in-person payments)"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Selecting Cash at Store generates a unique payment code and a printable receipt view (English) containing: app name, payment ID, amount (if applicable), code, creation date/time, and basic instructions.",
-        "The generated cash payment code is stored on the backend and linked to the case submission/payment record.",
-        "The UI provides a “Mark as paid / I have paid” acknowledgement option that updates status to “User Reported Paid” (without requiring external integrations)."
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Add a consistent, coherent visual theme for Criminal Defence 305 (colors, typography, layout) suitable for a serious legal-aid service, and apply it across all pages without using a blue/purple-dominant palette.",
+      "id": "REQ-13",
+      "text": "Add navigation and routing to expose the new features: Reference Library, Submission Documents, and Draft Motions, without breaking existing case submission and payment flows.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-2"
+          "msg-6",
+          "msg-16"
         ],
         "quotes": [
-          "AI. Criminal defence 305 is the apps name",
-          "You asked for a criminal defense help website..."
+          "I want this app to support legal documents...",
+          "I want it started asap"
         ]
       },
       "acceptanceCriteria": [
-        "Theme is applied consistently to navigation, headings, buttons, and forms.",
-        "Design reads as professional/legal-aid oriented (clean, high-contrast, accessible).",
-        "Primary/brand palette is not blue/purple-dominant."
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Add generated static brand images (logo and simple hero/banner) and render them in the UI from frontend/public/assets/generated (do not serve via backend).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "AI. Criminal defence 305 is the apps name"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Generated images exist in frontend/public/assets/generated and are referenced by the React app.",
-        "Home page includes the hero/banner image and the app logo in the header (or equivalent)."
+        "New routes are added to the app router and are reachable from existing navigation (header or relevant pages).",
+        "Existing routes (case submission, payments, admin) continue to function as before.",
+        "Unauthorized users are prompted to log in (Internet Identity) before accessing library/documents/drafting pages."
       ]
     }
   ],
   "constraints": [
+    "Backend must remain a single Motoko actor (all logic in backend/main.mo); only add migration code if an upgrade requires state migration.",
+    "Do not edit files under frontend/src/components/ui or any paths listed in frontend.immutablePaths; compose existing UI components instead.",
     "Use English for all user-facing text.",
-    "Backend must remain a single Motoko actor in backend/main.mo; only add backend/migration.mo if an upgrade/state migration becomes necessary.",
-    "Do not edit files in frontend immutablePaths (compose existing UI components instead).",
-    "Do not implement in-person payment scheduling; cash payment must be handled via a generated code/receipt for approved stores."
+    "Do not integrate external AI/LLM services; motion drafting must be template/form-based using user input and stored reference text only."
   ],
   "nonGoals": [
-    "Do not build third-party PayPal or Cash App API integrations (provide instructions + reference capture instead).",
-    "Do not implement real-time chat, SMS, push notifications, or email delivery integrations.",
-    "Do not build a multi-backend/microservices architecture or use external databases."
+    "Providing or bundling “all criminal law books” or a complete U.S. legal corpus by default (the library must be admin-entered/uploaded content only).",
+    "Automated legal determinations that guarantee identifying court errors or “freeing defendants.”",
+    "E-filing, court API integrations, or real-time messaging/chat."
   ],
   "imageRequirements": {
-    "required": [
-      "Wordmark logo reading “Criminal Defence 305”, bold legal-inspired typography, monochrome or dark neutral palette (cd305-logo.dim_512x512.png)",
-      "Wide hero/banner illustration with abstract courthouse/justice motifs, minimal flat style, dark neutral palette (cd305-hero.dim_1600x600.png)"
-    ],
+    "required": [],
     "edits": []
   },
   "userProfileUpdate": {

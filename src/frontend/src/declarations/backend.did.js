@@ -8,6 +8,17 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -51,6 +62,31 @@ export const UserProfile = IDL.Record({
   'email' : IDL.Text,
   'phone' : IDL.Text,
 });
+export const DocumentType = IDL.Variant({
+  'affidavit' : IDL.Null,
+  'other' : IDL.Text,
+  'evidence' : IDL.Null,
+  'courtOrder' : IDL.Null,
+});
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const CaseDocument = IDL.Record({
+  'id' : IDL.Text,
+  'documentType' : DocumentType,
+  'user' : IDL.Principal,
+  'fileName' : IDL.Text,
+  'fileSize' : IDL.Nat,
+  'fileContent' : ExternalBlob,
+  'submissionId' : IDL.Text,
+  'uploadTime' : Time,
+});
+export const DraftMotion = IDL.Record({
+  'id' : IDL.Text,
+  'content' : IDL.Text,
+  'motionType' : IDL.Text,
+  'user' : IDL.Principal,
+  'createdTime' : Time,
+  'submissionId' : IDL.Text,
+});
 export const ReferenceType = IDL.Variant({
   'paypalTransactionId' : IDL.Null,
   'cashappUsername' : IDL.Null,
@@ -60,6 +96,14 @@ export const PaymentReference = IDL.Record({
   'referenceType' : ReferenceType,
   'submissionId' : IDL.Text,
   'referenceValue' : IDL.Text,
+});
+export const ReferenceLibraryEntry = IDL.Record({
+  'id' : IDL.Text,
+  'title' : IDL.Text,
+  'content' : IDL.Text,
+  'createdBy' : IDL.Principal,
+  'author' : IDL.Text,
+  'dateAdded' : Time,
 });
 export const StripeSessionStatus = IDL.Variant({
   'completed' : IDL.Record({
@@ -92,7 +136,38 @@ export const TransformationOutput = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addReferenceEntry' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Text],
+      [],
+    ),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createCase' : IDL.Func([NewCaseData], [IDL.Text], []),
   'createCheckoutSession' : IDL.Func(
@@ -100,13 +175,34 @@ export const idlService = IDL.Service({
       [IDL.Text],
       [],
     ),
+  'createDraftMotion' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Text],
+      [],
+    ),
   'getAllSubmissions' : IDL.Func([], [IDL.Vec(CaseSubmission)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getDocument' : IDL.Func([IDL.Text], [IDL.Opt(CaseDocument)], ['query']),
+  'getDocumentsBySubmission' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(CaseDocument)],
+      ['query'],
+    ),
+  'getDraftMotionsBySubmission' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(DraftMotion)],
+      ['query'],
+    ),
   'getMySubmissions' : IDL.Func([], [IDL.Vec(CaseSubmission)], ['query']),
   'getPaymentReference' : IDL.Func(
       [IDL.Text],
       [IDL.Opt(PaymentReference)],
+      ['query'],
+    ),
+  'getReferenceEntry' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(ReferenceLibraryEntry)],
       ['query'],
     ),
   'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
@@ -119,6 +215,11 @@ export const idlService = IDL.Service({
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'searchReferenceEntries' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(ReferenceLibraryEntry)],
+      ['query'],
+    ),
   'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
   'submitPaymentReference' : IDL.Func(
       [IDL.Text, ReferenceType, IDL.Text],
@@ -135,11 +236,27 @@ export const idlService = IDL.Service({
       [],
       [],
     ),
+  'uploadDocument' : IDL.Func(
+      [IDL.Text, DocumentType, IDL.Text, IDL.Nat, ExternalBlob],
+      [IDL.Text],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -183,6 +300,31 @@ export const idlFactory = ({ IDL }) => {
     'email' : IDL.Text,
     'phone' : IDL.Text,
   });
+  const DocumentType = IDL.Variant({
+    'affidavit' : IDL.Null,
+    'other' : IDL.Text,
+    'evidence' : IDL.Null,
+    'courtOrder' : IDL.Null,
+  });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const CaseDocument = IDL.Record({
+    'id' : IDL.Text,
+    'documentType' : DocumentType,
+    'user' : IDL.Principal,
+    'fileName' : IDL.Text,
+    'fileSize' : IDL.Nat,
+    'fileContent' : ExternalBlob,
+    'submissionId' : IDL.Text,
+    'uploadTime' : Time,
+  });
+  const DraftMotion = IDL.Record({
+    'id' : IDL.Text,
+    'content' : IDL.Text,
+    'motionType' : IDL.Text,
+    'user' : IDL.Principal,
+    'createdTime' : Time,
+    'submissionId' : IDL.Text,
+  });
   const ReferenceType = IDL.Variant({
     'paypalTransactionId' : IDL.Null,
     'cashappUsername' : IDL.Null,
@@ -192,6 +334,14 @@ export const idlFactory = ({ IDL }) => {
     'referenceType' : ReferenceType,
     'submissionId' : IDL.Text,
     'referenceValue' : IDL.Text,
+  });
+  const ReferenceLibraryEntry = IDL.Record({
+    'id' : IDL.Text,
+    'title' : IDL.Text,
+    'content' : IDL.Text,
+    'createdBy' : IDL.Principal,
+    'author' : IDL.Text,
+    'dateAdded' : Time,
   });
   const StripeSessionStatus = IDL.Variant({
     'completed' : IDL.Record({
@@ -221,7 +371,38 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addReferenceEntry' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Text],
+        [],
+      ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createCase' : IDL.Func([NewCaseData], [IDL.Text], []),
     'createCheckoutSession' : IDL.Func(
@@ -229,13 +410,34 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Text],
         [],
       ),
+    'createDraftMotion' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Text],
+        [],
+      ),
     'getAllSubmissions' : IDL.Func([], [IDL.Vec(CaseSubmission)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getDocument' : IDL.Func([IDL.Text], [IDL.Opt(CaseDocument)], ['query']),
+    'getDocumentsBySubmission' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(CaseDocument)],
+        ['query'],
+      ),
+    'getDraftMotionsBySubmission' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(DraftMotion)],
+        ['query'],
+      ),
     'getMySubmissions' : IDL.Func([], [IDL.Vec(CaseSubmission)], ['query']),
     'getPaymentReference' : IDL.Func(
         [IDL.Text],
         [IDL.Opt(PaymentReference)],
+        ['query'],
+      ),
+    'getReferenceEntry' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(ReferenceLibraryEntry)],
         ['query'],
       ),
     'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
@@ -252,6 +454,11 @@ export const idlFactory = ({ IDL }) => {
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'searchReferenceEntries' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(ReferenceLibraryEntry)],
+        ['query'],
+      ),
     'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
     'submitPaymentReference' : IDL.Func(
         [IDL.Text, ReferenceType, IDL.Text],
@@ -266,6 +473,11 @@ export const idlFactory = ({ IDL }) => {
     'updateSubmissionStatusAdmin' : IDL.Func(
         [IDL.Text, SubmissionStatus],
         [],
+        [],
+      ),
+    'uploadDocument' : IDL.Func(
+        [IDL.Text, DocumentType, IDL.Text, IDL.Nat, ExternalBlob],
+        [IDL.Text],
         [],
       ),
   });

@@ -10,6 +10,16 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface CaseDocument {
+  'id' : string,
+  'documentType' : DocumentType,
+  'user' : Principal,
+  'fileName' : string,
+  'fileSize' : bigint,
+  'fileContent' : ExternalBlob,
+  'submissionId' : string,
+  'uploadTime' : Time,
+}
 export interface CaseSubmission {
   'id' : string,
   'status' : SubmissionStatus,
@@ -18,6 +28,19 @@ export interface CaseSubmission {
   'timestamp' : Time,
   'details' : string,
 }
+export type DocumentType = { 'affidavit' : null } |
+  { 'other' : string } |
+  { 'evidence' : null } |
+  { 'courtOrder' : null };
+export interface DraftMotion {
+  'id' : string,
+  'content' : string,
+  'motionType' : string,
+  'user' : Principal,
+  'createdTime' : Time,
+  'submissionId' : string,
+}
+export type ExternalBlob = Uint8Array;
 export interface NewCaseData {
   'paymentMethod' : PaymentMethod,
   'details' : string,
@@ -30,6 +53,14 @@ export interface PaymentReference {
   'referenceType' : ReferenceType,
   'submissionId' : string,
   'referenceValue' : string,
+}
+export interface ReferenceLibraryEntry {
+  'id' : string,
+  'title' : string,
+  'content' : string,
+  'createdBy' : Principal,
+  'author' : string,
+  'dateAdded' : Time,
 }
 export type ReferenceType = { 'paypalTransactionId' : null } |
   { 'cashappUsername' : null } |
@@ -72,6 +103,17 @@ export interface UserProfile {
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface http_header { 'value' : string, 'name' : string }
 export interface http_request_result {
   'status' : bigint,
@@ -79,24 +121,49 @@ export interface http_request_result {
   'headers' : Array<http_header>,
 }
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addReferenceEntry' : ActorMethod<[string, string, string], string>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createCase' : ActorMethod<[NewCaseData], string>,
   'createCheckoutSession' : ActorMethod<
     [Array<ShoppingItem>, string, string],
     string
   >,
+  'createDraftMotion' : ActorMethod<[string, string, string], string>,
   'getAllSubmissions' : ActorMethod<[], Array<CaseSubmission>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getDocument' : ActorMethod<[string], [] | [CaseDocument]>,
+  'getDocumentsBySubmission' : ActorMethod<[string], Array<CaseDocument>>,
+  'getDraftMotionsBySubmission' : ActorMethod<[string], Array<DraftMotion>>,
   'getMySubmissions' : ActorMethod<[], Array<CaseSubmission>>,
   'getPaymentReference' : ActorMethod<[string], [] | [PaymentReference]>,
+  'getReferenceEntry' : ActorMethod<[string], [] | [ReferenceLibraryEntry]>,
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
   'getSubmission' : ActorMethod<[string], [] | [CaseSubmission]>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'searchReferenceEntries' : ActorMethod<
+    [string],
+    Array<ReferenceLibraryEntry>
+  >,
   'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
   'submitPaymentReference' : ActorMethod<
     [string, ReferenceType, string],
@@ -106,6 +173,10 @@ export interface _SERVICE {
   'updateSubmissionStatusAdmin' : ActorMethod<
     [string, SubmissionStatus],
     undefined
+  >,
+  'uploadDocument' : ActorMethod<
+    [string, DocumentType, string, bigint, ExternalBlob],
+    string
   >,
 }
 export declare const idlService: IDL.ServiceClass;

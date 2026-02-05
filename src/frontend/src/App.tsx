@@ -19,6 +19,12 @@ import CashAppInstructionsPage from './pages/CashAppInstructionsPage';
 import CashAtStoreReceiptPage from './pages/CashAtStoreReceiptPage';
 import AdminPage from './pages/AdminPage';
 import ProfileSetupModal from './components/auth/ProfileSetupModal';
+import ReferenceLibraryPage from './pages/ReferenceLibraryPage';
+import AdminReferenceLibraryPage from './pages/AdminReferenceLibraryPage';
+import SubmissionDocumentsPage from './pages/SubmissionDocumentsPage';
+import DraftMotionsPage from './pages/DraftMotionsPage';
+import DraftMotionWizardPage from './pages/DraftMotionWizardPage';
+import RequireAuth from './components/auth/RequireAuth';
 
 function Layout() {
   return (
@@ -127,6 +133,56 @@ const adminRoute = createRoute({
   component: AdminPage,
 });
 
+const referenceLibraryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/reference-library',
+  component: () => (
+    <RequireAuth>
+      <ReferenceLibraryPage />
+    </RequireAuth>
+  ),
+});
+
+const adminReferenceLibraryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/reference-library',
+  component: () => (
+    <RequireAuth>
+      <AdminReferenceLibraryPage />
+    </RequireAuth>
+  ),
+});
+
+const submissionDocumentsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/submissions/$submissionId/documents',
+  component: () => (
+    <RequireAuth>
+      <SubmissionDocumentsPage />
+    </RequireAuth>
+  ),
+});
+
+const draftMotionsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/submissions/$submissionId/draft-motions',
+  component: () => (
+    <RequireAuth>
+      <DraftMotionsPage />
+    </RequireAuth>
+  ),
+});
+
+const draftMotionWizardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/submissions/$submissionId/draft-motions/new',
+  component: () => (
+    <RequireAuth>
+      <DraftMotionWizardPage />
+    </RequireAuth>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   servicesRoute,
@@ -143,6 +199,11 @@ const routeTree = rootRoute.addChildren([
   cashappInstructionsRoute,
   cashStoreReceiptRoute,
   adminRoute,
+  referenceLibraryRoute,
+  adminReferenceLibraryRoute,
+  submissionDocumentsRoute,
+  draftMotionsRoute,
+  draftMotionWizardRoute,
 ]);
 
 const router = createRouter({ routeTree });

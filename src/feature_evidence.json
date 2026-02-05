@@ -2,18 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-the-base-app-website-branded-as-criminal-defence-305-with-core-informational-pages-that-explain-the-low-cost-criminal-defense-help-services-and-how-the-process-works",
-      "featureTitle": "Create the base app/website branded as “Criminal Defence 305” with core informational pages that explain the low-cost criminal defense help services and how the process works.",
+      "featureId": "feature-implement-a-backend-managed-reference-library-feature-that-allows-admins-to-add-update-list-and-delete-reference-entries-text-and-metadata-and-allows-authenticated-users-to-search-browse-and-view-reference-entries-in-app",
+      "featureTitle": "Implement a backend-managed reference library feature that allows admins to add, update, list, and delete reference entries (text and metadata), and allows authenticated users to search/browse and view reference entries in-app.",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/components/layout/SiteFooter.tsx",
         "frontend/src/components/layout/SiteHeader.tsx",
-        "frontend/src/pages/CaseSubmissionPage.tsx",
-        "frontend/src/pages/ContactDisclaimerPage.tsx",
-        "frontend/src/pages/HomePage.tsx",
-        "frontend/src/pages/HowItWorksPage.tsx",
-        "frontend/src/pages/PaymentsPage.tsx",
-        "frontend/src/pages/ServicesPage.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/AdminReferenceLibraryPage.tsx",
+        "frontend/src/pages/ReferenceLibraryPage.tsx"
       ],
       "components": [
         "stripe@3.0.0",
@@ -23,20 +19,72 @@
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
         "http-outcalls@3.0.0",
-        "authorization@4.0.0"
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-10"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-a-case-intake-submission-flow-where-users-can-enter-case-details-and-submit-them-through-the-platform-then-receive-an-on-screen-confirmation-with-a-unique-submission-id",
-      "featureTitle": "Implement a case intake/submission flow where users can enter case details and submit them through the platform, then receive an on-screen confirmation with a unique submission ID.",
+      "featureId": "feature-add-a-guided-draft-motion-flow-that-lets-a-user-select-a-case-submission-pick-a-motion-template-fill-in-required-fields-optionally-select-relevant-reference-library-entries-and-then-generates-a-draft-motion-document-text-output-saved-to-the-backend-under-that-submission",
+      "featureTitle": "Add a guided “Draft Motion” flow that lets a user select a case submission, pick a motion template, fill in required fields, optionally select relevant reference-library entries, and then generates a draft motion document (text output) saved to the backend under that submission.",
       "files": [
         "frontend/src/App.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/DraftMotionWizardPage.tsx",
+        "frontend/src/pages/DraftMotionsPage.tsx"
+      ],
+      "components": [
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-frontend-ui-to-upload-and-manage-legal-documents-for-a-submission-metadata-file-content-stored-as-text-or-base64-where-feasible-including-listing-documents-viewing-a-document-and-deleting-a-document-with-clear-size-type-limits-communicated-to-the-user",
+      "featureTitle": "Add frontend UI to upload and manage legal documents for a submission (metadata + file content stored as text or base64 where feasible), including listing documents, viewing a document, and deleting a document, with clear size/type limits communicated to the user.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/SubmissionDocumentsPage.tsx"
+      ],
+      "components": [
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-navigation-and-routing-to-expose-the-new-features-reference-library-submission-documents-and-draft-motions-without-breaking-existing-case-submission-and-payment-flows",
+      "featureTitle": "Add navigation and routing to expose the new features: Reference Library, Submission Documents, and Draft Motions, without breaking existing case submission and payment flows.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/auth/RequireAuth.tsx",
+        "frontend/src/components/layout/SiteHeader.tsx",
         "frontend/src/pages/CaseSubmissionConfirmationPage.tsx",
-        "frontend/src/pages/CaseSubmissionPage.tsx"
+        "frontend/src/pages/PaymentStatusPage.tsx"
       ],
       "components": [
         "stripe@3.0.0",
@@ -46,150 +94,11 @@
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
         "http-outcalls@3.0.0",
-        "authorization@4.0.0"
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-checkout-payment-step-tied-to-a-case-submission-that-lets-users-choose-a-payment-method-credit-debit-card-paypal-cash-app-or-cash-at-approved-stores",
-      "featureTitle": "Add a checkout/payment step tied to a case submission that lets users choose a payment method: credit/debit card, PayPal, Cash App, or cash at approved stores.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/PaymentStatusPage.tsx",
-        "frontend/src/pages/PaymentsPage.tsx"
-      ],
-      "components": [
-        "stripe@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-support-card-payments-via-stripe-checkout-or-stripe-payment-link-flow-as-the-card-processing-method-for-the-app",
-      "featureTitle": "Support card payments via Stripe checkout (or Stripe payment link flow) as the card-processing method for the app.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/stripe/PaymentSetup.tsx",
-        "frontend/src/pages/CardCheckoutPage.tsx",
-        "frontend/src/pages/PaymentFailurePage.tsx",
-        "frontend/src/pages/PaymentSuccessPage.tsx"
-      ],
-      "components": [
-        "stripe@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-for-paypal-and-cash-app-payment-methods-provide-in-app-payment-instructions-and-collect-a-user-entered-payment-reference-e-g-transaction-id-or-username-to-associate-with-the-case-submission",
-      "featureTitle": "For PayPal and Cash App payment methods, provide in-app payment instructions and collect a user-entered payment reference (e.g., transaction ID or username) to associate with the case submission.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/CashAppInstructionsPage.tsx",
-        "frontend/src/pages/PayPalInstructionsPage.tsx"
-      ],
-      "components": [
-        "stripe@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-cash-payments-at-approved-third-party-stores-by-generating-a-payment-code-receipt-in-the-app-that-the-user-can-present-at-the-store-no-in-person-payments-scheduling",
-      "featureTitle": "Implement cash payments at approved third-party stores by generating a payment code/receipt in the app that the user can present at the store; no in-person payments scheduling.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/CashAtStoreReceiptPage.tsx",
-        "frontend/src/pages/PaymentsPage.tsx"
-      ],
-      "components": [
-        "stripe@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-consistent-coherent-visual-theme-for-criminal-defence-305-colors-typography-layout-suitable-for-a-serious-legal-aid-service-and-apply-it-across-all-pages-without-using-a-blue-purple-dominant-palette",
-      "featureTitle": "Add a consistent, coherent visual theme for Criminal Defence 305 (colors, typography, layout) suitable for a serious legal-aid service, and apply it across all pages without using a blue/purple-dominant palette.",
-      "files": [
-        "frontend/src/components/layout/SiteFooter.tsx",
-        "frontend/src/components/layout/SiteHeader.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
-      ],
-      "components": [
-        "stripe@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-generated-static-brand-images-logo-and-simple-hero-banner-and-render-them-in-the-ui-from-frontend-public-assets-generated-do-not-serve-via-backend",
-      "featureTitle": "Add generated static brand images (logo and simple hero/banner) and render them in the UI from frontend/public/assets/generated (do not serve via backend).",
-      "files": [
-        "frontend/src/components/layout/SiteHeader.tsx",
-        "frontend/src/pages/HomePage.tsx"
-      ],
-      "components": [
-        "stripe@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
+        "REQ-13"
       ],
       "confidence": "high"
     }

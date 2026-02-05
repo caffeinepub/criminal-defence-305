@@ -7,7 +7,12 @@ import type {
   ReferenceType, 
   UserProfile,
   ShoppingItem,
-  StripeConfiguration
+  StripeConfiguration,
+  ReferenceLibraryEntry,
+  CaseDocument,
+  DocumentType,
+  DraftMotion,
+  ExternalBlob
 } from '../backend';
 
 export function useGetCallerUserProfile() {
@@ -185,5 +190,125 @@ export function useGetAllSubmissions() {
       return actor.getAllSubmissions();
     },
     enabled: !!actor && !isFetching,
+  });
+}
+
+// Reference Library Hooks
+export function useSearchReferenceEntries(searchText: string) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<ReferenceLibraryEntry[]>({
+    queryKey: ['referenceEntries', searchText],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.searchReferenceEntries(searchText);
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetReferenceEntry(entryId: string | null) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<ReferenceLibraryEntry | null>({
+    queryKey: ['referenceEntry', entryId],
+    queryFn: async () => {
+      if (!actor || !entryId) return null;
+      return actor.getReferenceEntry(entryId);
+    },
+    enabled: !!actor && !isFetching && !!entryId,
+  });
+}
+
+export function useAddReferenceEntry() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ title, content, author }: { title: string; content: string; author: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.addReferenceEntry(title, content, author);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['referenceEntries'] });
+    },
+  });
+}
+
+// Document Management Hooks
+export function useGetDocumentsBySubmission(submissionId: string | null) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<CaseDocument[]>({
+    queryKey: ['documents', submissionId],
+    queryFn: async () => {
+      if (!actor || !submissionId) return [];
+      return actor.getDocumentsBySubmission(submissionId);
+    },
+    enabled: !!actor && !isFetching && !!submissionId,
+  });
+}
+
+export function useUploadDocument() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      submissionId,
+      documentType,
+      fileName,
+      fileSize,
+      fileContent,
+    }: {
+      submissionId: string;
+      documentType: DocumentType;
+      fileName: string;
+      fileSize: bigint;
+      fileContent: ExternalBlob;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.uploadDocument(submissionId, documentType, fileName, fileSize, fileContent);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['documents', variables.submissionId] });
+    },
+  });
+}
+
+// Draft Motion Hooks
+export function useGetDraftMotionsBySubmission(submissionId: string | null) {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<DraftMotion[]>({
+    queryKey: ['draftMotions', submissionId],
+    queryFn: async () => {
+      if (!actor || !submissionId) return [];
+      return actor.getDraftMotionsBySubmission(submissionId);
+    },
+    enabled: !!actor && !isFetching && !!submissionId,
+  });
+}
+
+export function useCreateDraftMotion() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      submissionId,
+      motionType,
+      content,
+    }: {
+      submissionId: string;
+      motionType: string;
+      content: string;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createDraftMotion(submissionId, motionType, content);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['draftMotions', variables.submissionId] });
+    },
   });
 }

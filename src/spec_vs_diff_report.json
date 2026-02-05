@@ -1,126 +1,53 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T20:56:07.183Z",
-  "summary": "The diff adds a new Motoko backend actor plus a React/TanStack Router frontend with branded pages, case submission UI, Stripe checkout session creation, and instruction pages for Cash App / cash-at-store. However, several payment-record/linkage requirements and the cash-at-store backend-generated code/receipt requirements are not clearly implemented from the provided diff summary. The diff also adds significant unrequested functionality (Internet Identity auth gating, user profile modal, admin dashboard/access control, Stripe key configuration UI).",
+  "generatedAt": "2026-02-05T21:25:42.869Z",
+  "summary": "Diff adds new backend state types for reference library entries, case documents (via ExternalBlob), and draft motions plus a migration initializer. Frontend adds pages/routes for Reference Library, per-submission Documents, Draft Motions list, and a Draft Motion wizard, along with an auth gate component. However, several requested admin/template and CRUD capabilities are not evidenced in the diff, and the Draft Motion flow appears hardcoded rather than template-driven.",
   "missing_requirements": [
     {
-      "id": "REQ-3",
-      "requirement": "A payment record is created on the backend and linked to the case submission ID; user can check payment status via submission/payment ID.",
-      "reason": "The backend snippet shows `submissions` and `paymentReferences` maps but no explicit payment record type/map or functions that create/link a payment record. Frontend shows routes for payments and payment status, but the actual implementation is not included in the visible diff summary, so backend linkage and status retrieval cannot be confirmed.",
+      "id": "REQ-10",
+      "requirement": "Admin-only backend methods to add, update, list, and delete reference library entries (title + body text + optional tags/source fields), and corresponding admin UI to create/edit/delete entries.",
+      "reason": "The admin UI page shown only demonstrates adding entries (useAddReferenceEntry) and listing/searching entries; no evidence of update/delete operations or optional tags/source fields in the data model (model uses author, not tags/source). Backend method implementations are not shown in the truncated backend/main.mo diff.",
       "evidence": [
-        "backend/main.mo (truncated)",
-        "frontend/src/App.tsx (truncated)"
+        "frontend/src/pages/AdminReferenceLibraryPage.tsx",
+        "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-4",
-      "requirement": "On successful Stripe payment completion, record payment as Paid and show success confirmation; on cancel/failure, show cancel/failure state and keep record not-paid.",
-      "reason": "Frontend creates a Stripe Checkout session and redirects to `session.url`, but the diff summary does not show any webhook/session-verification handling that updates backend payment/submission status to Paid (or not-paid on cancel). Backend includes `getStripeSessionStatus` but no visible logic linking that status to stored submission/payment status updates.",
+      "id": "REQ-11",
+      "requirement": "Backend supports admin-managed motion templates (template name + template body with placeholders + required field definitions). Frontend Draft Motion wizard must let user pick a template and generate text from that template (optionally including selected reference entries), then save draft to backend.",
+      "reason": "DraftMotionWizardPage generates content from a single hardcoded string template and collects fixed fields; there is no evidence of template selection, template retrieval, or admin-managed template CRUD in backend or frontend.",
       "evidence": [
-        "frontend/src/pages/CardCheckoutPage.tsx (truncated)",
-        "backend/main.mo (truncated)"
+        "frontend/src/pages/DraftMotionWizardPage.tsx",
+        "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-6",
-      "requirement": "Cash at Store generates a unique payment code and a printable receipt view containing app name, payment ID, amount (if applicable), code, creation date/time, and instructions; generated code is stored on backend and linked to submission/payment; UI includes 'Mark as paid / I have paid' to set status to 'User Reported Paid'.",
-      "reason": "The cash-at-store page derives `paymentCode` locally from `submissionId` (`CD305-${submissionId.slice(0, 8)}`) rather than obtaining a backend-generated unique code, and there is no evidence of a backend function that generates/stores a cash payment code linked to a payment record. The 'Mark as paid' action submits a payment reference of type `storePaymentCode`, but the acceptance criteria calls for a status like 'User Reported Paid' and a backend-stored cash payment code/receipt tied to a payment/paymentId.",
+      "id": "REQ-12",
+      "requirement": "Frontend UI to manage submission documents must include listing, viewing/opening a document, and deleting a document (with communicated type/size limits).",
+      "reason": "The diff shows upload handling and communicates size/type limits, and it fetches a documents list, but the provided truncated content does not show any UI/actions for viewing/opening or deleting documents.",
       "evidence": [
-        "frontend/src/pages/CashAtStoreReceiptPage.tsx (truncated)",
-        "backend/main.mo (truncated)"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "Generated images exist in frontend/public/assets/generated and are referenced by the React app.",
-      "reason": "The React app references `/assets/generated/cd305-logo.dim_512x512.png` and `/assets/generated/cd305-hero.dim_1600x600.png`, but the diff summary does not show the actual image files being added under `frontend/public/assets/generated` (they may be among omitted added files, but this cannot be confirmed from provided evidence).",
-      "evidence": [
-        "frontend/src/components/layout/SiteHeader.tsx (truncated)",
-        "frontend/src/pages/HomePage.tsx (truncated)"
+        "frontend/src/pages/SubmissionDocumentsPage.tsx"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "Internet Identity authentication requirement to submit a case (login/logout in header; submission page gated behind authentication).",
-      "reason": "The BuildRequest did not require authentication/Internet Identity gating for intake or payments; it only requested an intake + payments flow.",
-      "evidence": [
-        "frontend/src/components/layout/SiteHeader.tsx (truncated)",
-        "frontend/src/pages/CaseSubmissionPage.tsx (truncated)",
-        "frontend/src/hooks/useInternetIdentity.ts (truncated)"
-      ]
-    },
-    {
-      "description": "Mandatory user profile collection modal (name/email/phone) stored in backend via save/get profile endpoints.",
-      "reason": "User profile management is not requested in any REQ; the intake form requirements only mention case details and payment handling.",
-      "evidence": [
-        "frontend/src/components/auth/ProfileSetupModal.tsx",
-        "frontend/src/App.tsx (truncated)",
-        "backend/main.mo (truncated)",
-        "frontend/src/hooks/useQueries.ts (truncated)"
-      ]
-    },
-    {
-      "description": "Admin dashboard and access-control/authorization system (admin-only Stripe configuration, admin submissions view, secret-token initialization).",
-      "reason": "The BuildRequest does not request an admin panel, role-based permissions, or secret-token based access control initialization.",
-      "evidence": [
-        "frontend/src/pages/AdminPage.tsx (truncated)",
-        "frontend/src/components/stripe/PaymentSetup.tsx (truncated)",
-        "frontend/src/hooks/useActor.ts",
-        "backend/main.mo (truncated)"
-      ]
-    },
-    {
-      "description": "In-app Stripe secret key configuration UI stored in backend.",
-      "reason": "REQ-4 requires Stripe checkout flow support, but does not ask to build an admin UI/workflow to store Stripe secret keys on-chain via the app.",
-      "evidence": [
-        "frontend/src/components/stripe/PaymentSetup.tsx (truncated)",
-        "backend/main.mo (truncated)"
-      ]
-    },
-    {
-      "description": "Footer attribution 'Built with ... caffeine.ai'.",
-      "reason": "Not requested in requirements and adds external branding to user-facing UI.",
-      "evidence": [
-        "frontend/src/components/layout/SiteFooter.tsx"
-      ]
-    }
-  ],
-  "confidence": 0.66,
+  "hallucinated_features": [],
+  "confidence": 0.62,
   "changed_files": [
-    "all_files_summary.json",
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.css",
-    "frontend/index.html",
     "frontend/src/App.tsx",
-    "frontend/src/components/auth/ProfileSetupModal.tsx",
-    "frontend/src/components/layout/SiteFooter.tsx",
+    "frontend/src/components/auth/RequireAuth.tsx",
     "frontend/src/components/layout/SiteHeader.tsx",
-    "frontend/src/components/stripe/PaymentSetup.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/AdminPage.tsx",
-    "frontend/src/pages/CardCheckoutPage.tsx",
+    "frontend/src/pages/AdminReferenceLibraryPage.tsx",
     "frontend/src/pages/CaseSubmissionConfirmationPage.tsx",
-    "frontend/src/pages/CaseSubmissionPage.tsx",
-    "frontend/src/pages/CashAppInstructionsPage.tsx",
-    "frontend/src/pages/CashAtStoreReceiptPage.tsx",
-    "frontend/src/pages/ContactDisclaimerPage.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/pages/HowItWorksPage.tsx",
-    "frontend/src/pages/PayPalInstructionsPage.tsx",
-    "frontend/src/pages/PaymentFailurePage.tsx",
+    "frontend/src/pages/DraftMotionWizardPage.tsx",
+    "frontend/src/pages/DraftMotionsPage.tsx",
     "frontend/src/pages/PaymentStatusPage.tsx",
-    "frontend/src/pages/PaymentSuccessPage.tsx",
-    "frontend/src/pages/PaymentsPage.tsx",
-    "frontend/src/pages/ServicesPage.tsx",
-    "frontend/src/utils/urlParams.ts",
-    "frontend/tailwind.config.js",
+    "frontend/src/pages/ReferenceLibraryPage.tsx",
+    "frontend/src/pages/SubmissionDocumentsPage.tsx",
     "project_state.json"
   ]
 }

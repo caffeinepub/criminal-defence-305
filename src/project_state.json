@@ -1,13 +1,14 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
-  "summary": "Build “Criminal Defence 305”, a criminal defense help platform offering low-cost assistance where users can learn about services, submit their cases, and pay using multiple methods including cards, PayPal, Cash App, and cash payments at approved stores via generated payment code/receipt.",
+  "projectStateVersion": 5,
+  "summary": "Expand “Criminal Defence 305” to include legal document support and motion drafting assistance, leveraging a comprehensive U.S. criminal law/constitutional/due-process reference library to help identify potential court/procedural errors and generate draft motions for clients (as part of the platform’s low-cost criminal defense help workflow).",
   "architectural_notes": [
-    "Payment system must support both online card/wallet processing and offline cash-at-store payments via generated payment code/receipt."
+    "Payment system must support both online card/wallet processing and offline cash-at-store payments via generated payment code/receipt.",
+    "Legal-content feature requires a clearly defined, legally usable content source/licensing approach for statutes/rules/treatises; cannot assume proprietary “all criminal law books” are available by default.",
+    "Document/motion generation should be implemented as draft templates/workflow with appropriate disclaimers and human review, not as guaranteed legal outcomes."
   ],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Wordmark logo reading “Criminal Defence 305”, bold legal-inspired typography, monochrome or dark neutral palette (cd305-logo.dim_512x512.png)\n- Wide hero/banner illustration with abstract courthouse/justice motifs, minimal flat style, dark neutral palette (cd305-hero.dim_1600x600.png)",
   "existing_features": [
     {
       "id": "feature-create-the-base-app-website-branded-as-criminal-defence-305-with-core-informational-pages-that-explain-the-low-cost-criminal-defense-help-services-and-how-the-process-works",
@@ -72,6 +73,38 @@
         "REQ-8"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-implement-a-backend-managed-reference-library-feature-that-allows-admins-to-add-update-list-and-delete-reference-entries-text-and-metadata-and-allows-authenticated-users-to-search-browse-and-view-reference-entries-in-app",
+      "title": "Implement a backend-managed reference library feature that allows admins to add, update, list, and delete reference entries (text and metadata), and allows authenticated users to search/browse and view reference entries in-app.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-guided-draft-motion-flow-that-lets-a-user-select-a-case-submission-pick-a-motion-template-fill-in-required-fields-optionally-select-relevant-reference-library-entries-and-then-generates-a-draft-motion-document-text-output-saved-to-the-backend-under-that-submission",
+      "title": "Add a guided “Draft Motion” flow that lets a user select a case submission, pick a motion template, fill in required fields, optionally select relevant reference-library entries, and then generates a draft motion document (text output) saved to the backend under that submission.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-frontend-ui-to-upload-and-manage-legal-documents-for-a-submission-metadata-file-content-stored-as-text-or-base64-where-feasible-including-listing-documents-viewing-a-document-and-deleting-a-document-with-clear-size-type-limits-communicated-to-the-user",
+      "title": "Add frontend UI to upload and manage legal documents for a submission (metadata + file content stored as text or base64 where feasible), including listing documents, viewing a document, and deleting a document, with clear size/type limits communicated to the user.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-navigation-and-routing-to-expose-the-new-features-reference-library-submission-documents-and-draft-motions-without-breaking-existing-case-submission-and-payment-flows",
+      "title": "Add navigation and routing to expose the new features: Reference Library, Submission Documents, and Draft Motions, without breaking existing case submission and payment flows.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -97,6 +130,20 @@
       "id": "AR-4",
       "summary": "Enable cash payments at approved third-party stores by generating a payment code/receipt users can present to pay (no in-person payments)",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Add a U.S. criminal law / constitutional / due-process reference library and generate draft motions/documents based on potential court/procedural errors tied to a submitted case",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add backend data models and actor methods to store and retrieve (a) user-uploaded legal documents tied to a case submission and (b) generated draft motion documents tied to a case submission, with ownership checks (user can only access their own items; admin can access all).",
+      "reqIds": [
+        "REQ-9"
+      ],
       "status": "pending"
     }
   ],

@@ -1,17 +1,16 @@
 # Specification
 
 ## Summary
-**Goal:** Build the “Criminal Defence 305” website with informational pages, a case submission flow, and a payment step (Stripe card checkout, PayPal/Cash App instructions + reference capture, and cash-at-store payment code/receipt).
+**Goal:** Add per-case legal document storage, an in-app reference library, and a guided template-based draft motion workflow tied to case submissions.
 
 **Planned changes:**
-- Create a branded “Criminal Defence 305” frontend with navigable pages: Home, Services, How It Works, Case Submission, Payments, Contact/Disclaimer (English).
-- Apply a consistent professional legal-aid theme (not blue/purple-dominant) across navigation, typography, forms, and layout.
-- Implement case intake form with basic validation; submit to backend, store submission, and show confirmation with a unique submission ID and next steps.
-- Add payment flow tied to a case submission with method selection: Card, PayPal, Cash App, Cash at Store; create and store a payment record linked to the submission.
-- Implement Stripe-based card payment flow with success/cancel/failure handling and corresponding payment status updates.
-- Provide PayPal and Cash App instruction screens and collect a user-entered payment reference; store it and update status to “Reference Submitted” (or equivalent).
-- Implement Cash at Store flow: generate unique payment code and printable receipt view (app name, payment ID, amount if applicable, code, timestamp, instructions); store code and support “I have paid” acknowledgement to set status “User Reported Paid”.
-- Add a payment status page retrievable by case submission ID (or payment ID) showing statuses such as Pending, Instructions Provided, Reference Submitted, Paid, Cancelled, User Reported Paid.
-- Add generated static brand assets (logo and hero/banner) in `frontend/public/assets/generated` and render them in the UI (logo in header and hero/banner on Home).
+- Add backend support to store/retrieve/delete user-uploaded legal documents linked to a case submission, enforcing ownership/admin access rules.
+- Add backend support to store/retrieve/delete generated draft motion documents linked to a case submission, enforcing the same authorization rules.
+- Implement a backend-managed Reference Library: admin CRUD for reference entries (title, body, optional metadata) and user-facing list/search/view APIs.
+- Add frontend Reference Library page for users to browse/search/read entries, and an admin-only UI to manage reference entries.
+- Add admin-managed motion templates (placeholders + required fields) and a frontend “Draft Motion” wizard to select a submission, choose a template, fill fields, optionally include reference entries, preview, and save the draft to the backend.
+- Add frontend UI to upload, list, view, and delete submission documents, including clear file size/type limit messaging.
+- Add navigation/routes for Reference Library, Submission Documents, and Draft Motions, while keeping existing submission/payment/admin flows working and requiring login where appropriate.
+- Add clear disclaimer text on all draft-related user screens stating outputs are informational and must be reviewed by a qualified attorney before filing.
 
-**User-visible outcome:** Visitors can learn about Criminal Defence 305 services, submit a case and receive a submission ID, choose a payment method (Stripe card checkout or instruction-based PayPal/Cash App with reference, or cash-at-store code/receipt), and check payment status using their submission/payment ID.
+**User-visible outcome:** Authenticated users can manage documents per case submission, search/read a reference library, and generate/save/reopen draft motions via a guided template flow; admins can manage reference entries and motion templates, and users can only access their own documents/drafts.
